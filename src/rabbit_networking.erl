@@ -50,7 +50,7 @@
 -include("rabbit.hrl").
 -include_lib("kernel/include/inet.hrl").
 
--define(FIRST_TEST_BIND_PORT, 10000).
+-define(FIRST_TEST_BIND_PORT, 32768).
 
 %% POODLE
 -define(BAD_SSL_PROTOCOL_VERSIONS, [sslv3]).
