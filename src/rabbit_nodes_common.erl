@@ -80,9 +80,14 @@ do_ensure_epmd(false, Prog) ->
     rabbit_log:error("ensure_epmd: unable to find executable '~s' in PATH: '~s'", [Prog, Path]);
 do_ensure_epmd(Exe, _) ->
     ID = rabbit_misc:random(1000000000),
+    ProtoDist = case init:get_argument(proto_dist) of
+            {ok, [Proto | _Protos]} -> Proto;
+            error -> "inet_tcp"
+    end,
     Port = open_port(
              {spawn_executable, Exe},
              [{args, ["-sname", rabbit_misc:format("epmd-starter-~b", [ID]),
+                      "-proto_dist", rabbit_misc:format("~p", [ProtoDist]),
                       "-noshell", "-eval", "halt()."]},
               exit_status, stderr_to_stdout, use_stdio]),
     port_shutdown_loop(Port).
