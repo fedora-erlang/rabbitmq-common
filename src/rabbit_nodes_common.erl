@@ -76,10 +76,15 @@ epmd_port() ->
 ensure_epmd() ->
     Exe = rabbit_runtime:get_erl_path(),
     ID = rabbit_misc:random(1000000000),
+    ProtoDist = case init:get_argument(proto_dist) of
+            {ok, [Proto | _Protos]} -> Proto;
+            error -> "inet_tcp"
+    end,
     Port = open_port(
              {spawn_executable, Exe},
              [{args, ["-boot", "no_dot_erlang",
                       "-sname", rabbit_misc:format("epmd-starter-~b", [ID]),
+                      "-proto_dist", rabbit_misc:format("~p", [ProtoDist]),
                       "-noinput", "-s", "erlang", "halt"]},
               exit_status, stderr_to_stdout, use_stdio]),
     port_shutdown_loop(Port).
