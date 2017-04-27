@@ -75,7 +75,7 @@
 -export([get_env/3]).
 -export([get_channel_operation_timeout/0]).
 -export([random/1]).
--export([rpc_call/4, rpc_call/5]).
+-export([rpc_call/4, rpc_call/5, rpc_call/7]).
 -export([report_default_thread_pool_size/0]).
 -export([get_gc_info/1]).
 
@@ -264,6 +264,8 @@
 -spec random(non_neg_integer()) -> non_neg_integer().
 -spec rpc_call(node(), atom(), atom(), [any()]) -> any().
 -spec rpc_call(node(), atom(), atom(), [any()], number()) -> any().
+-spec rpc_call
+        (node(), atom(), atom(), [any()], reference(), pid(), number()) -> any().
 -spec report_default_thread_pool_size() -> 'ok'.
 -spec get_gc_info(pid()) -> integer().
 
@@ -1181,6 +1183,9 @@ rpc_call(Node, Mod, Fun, Args, Timeout) ->
         Time            -> net_kernel:set_net_ticktime(Time, 0),
                            rpc:call(Node, Mod, Fun, Args, Timeout)
     end.
+
+rpc_call(Node, Mod, Fun, Args, Ref, Pid, Timeout) ->
+    rpc_call(Node, Mod, Fun, Args++[Ref, Pid], Timeout).
 
 guess_number_of_cpu_cores() ->
     case erlang:system_info(logical_processors_available) of
