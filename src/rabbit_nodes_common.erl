@@ -89,7 +89,8 @@ do_ensure_epmd(Exe, _) ->
              [{args, ["-sname", rabbit_misc:format("epmd-starter-~b", [ID]),
                       "-proto_dist", rabbit_misc:format("~p", [ProtoDist]),
                       "-noshell", "-eval", "halt()."]},
-              exit_status, stderr_to_stdout, use_stdio]),
+              exit_status, stderr_to_stdout, use_stdio,
+	      {env, [{"ERL_CRASH_DUMP_SECONDS", "0"}]}]),
     port_shutdown_loop(Port).
 
 port_shutdown_loop(Port) ->
